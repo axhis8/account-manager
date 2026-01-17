@@ -6,8 +6,7 @@ A simple command-line account manager to generate, save and manage passwords loc
 
 This is my small Python Project I worked on as a exercise.
 
-> [!warning] Note
-> Do not use real passwords with this script. It is for educational purposes only.
+> ⚠️ Do **not** use real passwords with this script. It is for educational purposes only.
 
 ## How to Run
 
