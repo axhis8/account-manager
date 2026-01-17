@@ -23,5 +23,3 @@ if __name__ == '__main__':
 
                 case "5":
                     break
-            
-            input("\nEnter to continue ")

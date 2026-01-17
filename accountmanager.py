@@ -1,6 +1,13 @@
-import string
+import json
+import keyring as kr
 import random
+import string
+import os
 
+# Path to file to this script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Path for Json
+JSON_PATH = os.path.join(BASE_DIR, "accounts.json")
 MIN_PWD_LENGTH = 8
 MAX_PWD_LENGTH = 16
 SPECIALS = ["!", "@", "#", "$", "%", "&", "*"]
@@ -9,13 +16,18 @@ STARS = "****"
 class AccountManager:
 
     def __init__(self):
-        # {ID: [service, username, password]}
-        self.password_list = {1: ["Youtube", "Ashis", "123"],
-                        2: ["Twitch", "Fish", "asdasd"],
-                        3: ["Telegram", "Bananaslayer", "H)QCWJ)EC()"],
-                        4: ["Instagram", "Moinsen", "SUS"],
-                        5: ["Facebook", "ashislmc", "HEYHEY"],}
-        
+
+        try:
+            with open(JSON_PATH, "r") as file:
+                data: dict = json.load(file)
+                self.password_list = {int(k): v for k, v in data.items()}
+        except FileNotFoundError:
+            self.password_list = {} # {ID: [service, username]}
+        except json.JSONDecodeError:
+            print("\nJSON File is damaged, creating a new list.\n")
+            self.password_list = {}
+
+        print(self.password_list)
         self.password_id = len(self.password_list)
 
 
@@ -46,10 +58,73 @@ class AccountManager:
             self.save_account(new_pwd)
 
     def show_accounts_menu(self):
+        if self.password_list == {}:
+            print("\nNo Passwords saved.\n")
+            input("Enter to continue ")
+            return
+        
         for k, v in self.password_list.items():
             print(f'\nID: {k} - {v[0]}')
             print(f'Username: {v[1]}')
-            print(f'Password: {v[2]}')
+        
+        id_input = input("\nType which ID to show Password (Enter to exit): ")
+        if id_input == "": return
+
+        try:
+            id_input = int(id_input)
+        except ValueError:
+            print("This ID is not a Number.")
+            return
+        
+        if id_input in self.password_list:
+
+            gotten_service = self.password_list[id_input][0]
+            gotten_username = self.password_list[id_input][1]
+            gotten_pwd = self._get_password(gotten_service, gotten_username)
+
+            if gotten_pwd == None:
+                return
+
+            print(f'\n{id_input}. {gotten_service}')
+            print(f'Username: {gotten_username}')
+            print(f'Password: {gotten_pwd}')
+            input("\nEnter to continue ")
+        
+        else:
+            print("\nError. This ID does not exist.")
+
+    # ==================== WRAPPER ====================
+
+    def _set_password(self, service, username, pwd):
+        try:
+            kr.set_password(service, username, pwd)
+            self._save_pwd_in_json()
+            print("\nPassword saved!")
+        except Exception as e:
+            print("\nError. Couldn't save Account.")
+
+    def _get_password(self, service, username):
+        try:
+            return kr.get_password(service, username)
+        except Exception as e:
+            print("\nError. Couldn't retrieve Account.")
+            return None
+
+    def _del_password(self, service, username):
+        try:
+            kr.delete_password(service, username)
+            self._save_pwd_in_json()
+            return True
+        except Exception as e:
+            print("\nError. Couldn't delete Account.")
+            return False
+        
+    def _save_pwd_in_json(self):
+        try:
+            with open(JSON_PATH, "w") as file:
+                json.dump(self.password_list, file, indent=4)
+        except Exception as e:
+            print(f'Loading Error: {e}')
 
 
     # ==================== LOGIC ====================
@@ -100,18 +175,32 @@ class AccountManager:
             return
 
         self.password_id += 1
-        self.password_list[self.password_id] = [service, username, pwd]
-        print("\nPassword saved!")
+        self.password_list[self.password_id] = [service, username]
+
+        self._set_password(service, username, pwd)
 
     def delete_account(self):
         try:
-            id = int(input("ID of the account you want to delete: "))
+            id = int(input("\nID of the account you want to delete: "))
             if id in self.password_list:
-                print(f'\nSuccessfully deleted {self.password_list[id][0]} account with the ID of {id}')
-                del self.password_list[id]
+
+                del_service = self.password_list[id][0]
+                del_username = self.password_list[id][1]
+
+                print(f'\nService: {del_service}')
+                print(f'Username: {del_username}')
+                confirm = input("\nAre you sure you want to delete this Account? (y/n): ")
+                if not self.check_user_input(confirm):
+                    return
+
+                if self._del_password(del_service, del_username):
+                    print(f'\nSuccessfully deleted {self.password_list[id][0]} account with the ID of {id}')
+                    del self.password_list[id]
+
             else: 
                 print("\nThere is no account with this ID.")
 
         except ValueError:
             print(f'\nThis ID does not exist.')
         
+        input("\nEnter to continue ")
