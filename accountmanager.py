@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Path for Json
 JSON_PATH = os.path.join(BASE_DIR, "accounts.json")
 MIN_PWD_LENGTH = 8
-MAX_PWD_LENGTH = 16
+MAX_PWD_LENGTH = 64
 SPECIALS = ["!", "@", "#", "$", "%", "&", "*"]
 STARS = "****"
 
@@ -27,7 +27,6 @@ class AccountManager:
             print("\nJSON File is damaged, creating a new list.\n")
             self.password_list = {}
 
-        print(self.password_list)
         self.password_id = len(self.password_list)
 
 
@@ -113,7 +112,6 @@ class AccountManager:
     def _del_password(self, service, username):
         try:
             kr.delete_password(service, username)
-            self._save_pwd_in_json()
             return True
         except Exception as e:
             print("\nError. Couldn't delete Account.")
@@ -196,6 +194,7 @@ class AccountManager:
                 if self._del_password(del_service, del_username):
                     print(f'\nSuccessfully deleted {self.password_list[id][0]} account with the ID of {id}')
                     del self.password_list[id]
+                    self._save_pwd_in_json()
 
             else: 
                 print("\nThere is no account with this ID.")
