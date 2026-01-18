@@ -23,17 +23,17 @@ To ensure a clean environment, it is recommended to use a virtual environment (*
 
     Windows:
 
-        ```bash
-        python -m venv venv
-        .\venv\Scripts\activate
-        ```
+    ```bash
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
 
     Mac/Linux:
 
-        ```bash
-        python3 -m venv venv
-        source venv/bin/activate
-        ```
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
 
 3.  Install dependencies
 
