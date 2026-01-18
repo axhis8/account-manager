@@ -27,7 +27,8 @@ class AccountManager:
             print("\nJSON File is damaged, creating a new list.\n")
             self.password_list = {}
 
-        self.password_id = len(self.password_list)
+        # Get highest ID
+        self.password_id = max(list(self.password_list.keys())) if self.password_list else 0
 
 
     # ==================== UI ====================
@@ -41,7 +42,7 @@ class AccountManager:
         print("5 - Exit\n")
 
     def generate_pwd_menu(self):
-        input_length = input("How many characters should the Password contain? (length 8-16): ")
+        input_length = input("How many characters should the Password contain? (length 8-64): ")
         input_specials = input("Should there be special characters? (y/n): ")
 
         needs_specials = self.check_user_input(input_specials)
