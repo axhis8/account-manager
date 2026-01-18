@@ -12,39 +12,39 @@ This is my small Python Project I worked on as a exercise.
 
 To ensure a clean environment, it is recommended to use a virtual environment (**venv**).
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone <your-repo-url>
-   cd account-manager
-   ```
-
-2. Create & active a virtual environment
-
-Windows:
+1.  **Clone the repository:**
 
     ```bash
-    python -m venv venv
-    .\venv\Scripts\activate
+    git clone <your-repo-url>
+    cd account-manager
     ```
 
-Mac/Linux:
+2.  Create & active a virtual environment
+
+    Windows:
+
+        ```bash
+        python -m venv venv
+        .\venv\Scripts\activate
+        ```
+
+    Mac/Linux:
+
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate
+        ```
+
+3.  Install dependencies
 
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
+    pip install keyring
     ```
 
-3. Install dependencies
-
-   ```bash
-   pip install keyring
-   ```
-
-4. Run the application;
-   ```bash
-   python main.py
-   ```
+4.  Run the application;
+    ```bash
+    python main.py
+    ```
 
 ## Features
 
