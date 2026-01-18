@@ -15,7 +15,7 @@ To ensure a clean environment, it is recommended to use a virtual environment (*
 1.  **Clone the repository:**
 
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/axhis8/account-manager.git
     cd account-manager
     ```
 
